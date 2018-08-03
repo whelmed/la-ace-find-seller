@@ -6,3 +6,4 @@ vendor
 bin
 bigquery_table_def.json
 publicbucketcors.json
+.DS_Store

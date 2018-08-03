@@ -51,8 +51,8 @@ source common/project_settings.sh
 
 echo "Have you setup the urls and environment variables for the frontend app?"
 echo "Set the APP_TOPIC environment variable to $PUB_SUB_TOPIC"
-echo "Set the host on line 58 in the items.js file to http://$(gcloud compute forwarding-rules list --filter='name:"ads-service-forwarding-rules"' --format='value(IPAddress)')/"
-echo "Set the host on line 16 in the items.js file to http://$(kubectl get svc -o jsonpath='{.items[*].status.loadBalancer.ingress[0].ip}')/"
+echo "Set the host on line 5 in the items.js file to http://$(kubectl get svc -o jsonpath='{.items[*].status.loadBalancer.ingress[0].ip}')/"
+echo "Set the host on line 8 in the items.js file to http://$(gcloud compute forwarding-rules list --filter='name:"ads-service-forwarding-rules"' --format='value(IPAddress)')/"
 
 while true; do
     read -p "Are you ready to continue? (Y or N): " yn

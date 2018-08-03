@@ -22,14 +22,7 @@ type ad struct {
 	Timestamp     time.Time `json:"timestamp"`
 }
 
-// var serviceAccountFileName string
-
 func init() {
-	// serviceAccountFileName = os.Getenv("SERVICE_ACCOUNT_FILE_NAME")
-
-	// if serviceAccountFileName == "" {
-	// 	log.Fatal("missing environment variable SERVICE_ACCOUNT_FILE_NAME")
-	// }
 
 	if os.Getenv("PROJECT_ID") == "" {
 		log.Fatal("missing environment variable PROJECT_ID")
