@@ -1,0 +1,40 @@
+imports:
+- path: instance.jinja
+- path: autoscaler.jinja
+- path: loadbalancer.jinja
+
+resources:
+- name: ads-deployment-instances
+  type: instance.jinja
+  properties:
+    region: us-central1
+    zone: us-central1-b
+    prefix: ads-service
+    privateBucket: fs2-private-bucket
+    publicBucket: fs2-public-bucket
+    spannerDatabase: fs2-app-spanner-db
+    spannerInstance: fs2-app-spanner-instance
+    network: fs2-app-network
+    subnet: fs2-ad-app-network-subnet
+    projectID: ace-demo-2
+    adBinName: app
+    serviceAccount: 53612557816-compute@developer.gserviceaccount.com
+
+
+- name: ads-deployment-autoscaler
+  type: autoscaler.jinja
+  properties:
+    zone: us-central1-b
+    prefix: ads-service
+    privateBucket: fs2-private-bucket
+    projectID: ace-demo-2
+    adBinName: app
+    size: 1
+    maxSize: 2
+
+- name: ads-deployment-loadbalancer
+  type: loadbalancer.jinja
+  properties:
+    prefix: ads-service
+    network: fs2-app-network
+    projectID: ace-demo-2

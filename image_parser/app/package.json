@@ -1,0 +1,11 @@
+{
+    "name": "image_parser",
+    "version": "0.0.1",
+     
+    "dependencies": {
+      "@google-cloud/vision": "^0.21.0",
+      "@google-cloud/bigtable": "^0.15.0",
+      "@google-cloud/storage": "^1.7.0"
+    }
+  }
+  

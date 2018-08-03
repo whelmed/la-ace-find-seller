@@ -1,0 +1,55 @@
+resources:
+- name: {{ properties["prefix"] }}-backend-service
+  type: compute.v1.backendService
+  properties:
+    portName: application-port
+    sessionAffinity: NONE
+    backends:
+      - description: The backend for the ad service
+        group: $(ref.ads-service-instance-group-manager.instanceGroup)
+        balancingMode: UTILIZATION
+        maxUtilization: 0.8
+        capacityScaler: 1.0
+    healthChecks: [$(ref.{{ properties["prefix"] }}-health-check.selfLink)]
+    loadBalancingScheme: EXTERNAL
+
+- name: {{ properties["prefix"] }}-health-check
+  type: compute.v1.httpHealthCheck
+  properties:
+    description: HTTP check
+    requestPath: /
+    port: 8002
+    checkIntervalSec: 5
+    timeoutSec: 5
+    unhealthyThreshold: 2
+    healthyThreshold: 2
+
+- name: {{ properties["prefix"] }}-url-map
+  type: compute.v1.urlMap
+  properties:
+    defaultService: $(ref.{{ properties["prefix"] }}-backend-service.selfLink)
+
+- name: {{ properties["prefix"] }}-http-proxy
+  type: compute.v1.targetHttpProxy
+  properties:
+    urlMap: $(ref.{{ properties["prefix"] }}-url-map.selfLink)
+
+- name: {{ properties["prefix"] }}-forwarding-rules
+  type: compute.v1.globalForwardingRule
+  properties:
+    IPProtocol: TCP
+    portRange: 80
+    target: $(ref.{{ properties["prefix"] }}-http-proxy.selfLink)
+
+- name: {{ properties["prefix"] }}-firewall-rule-lb7-to-app
+  type: compute.v1.firewall
+  properties:
+    allowed: 
+      - IPProtocol: tcp
+        ports: 
+          - 8002
+    direction: INGRESS
+    disabled: false
+    network: projects/{{ properties["projectID"] }}/global/networks/{{ properties["network"] }}
+    priority: 1000
+    sourceRanges: [130.211.0.0/22, 35.191.0.0/16]

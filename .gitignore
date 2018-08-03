@@ -1,0 +1,8 @@
+# Any build artifacts
+build/out/app
+service_account.json
+secrets
+vendor
+bin
+bigquery_table_def.json
+publicbucketcors.json

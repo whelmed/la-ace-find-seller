@@ -1,0 +1,19 @@
+resources:
+- name: ads-service-instance-group-manager
+  type: compute.v1.instanceGroupManager
+  properties:
+    zone: {{ properties["zone"] }}
+    targetSize: {{ properties["size"] }}
+    baseInstanceName: {{ properties["prefix"] }}-instance-name
+    instanceTemplate: $(ref.{{ properties["prefix"] }}-instance-template.selfLink)
+    namedPorts:
+      - name: application-port
+        port: 8002
+
+- name: ads-service-instance-auto-scaler
+  type: compute.v1.autoscaler
+  properties:
+    zone: {{ properties["zone"] }}
+    target: $(ref.ads-service-instance-group-manager.selfLink)
+    autoscalingPolicy:
+      maxNumReplicas: {{ properties["maxSize"] }}

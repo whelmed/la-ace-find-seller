@@ -1,0 +1,21 @@
+runtime: go
+api_version: go1
+
+handlers:
+
+
+- url: /public
+  static_dir: public
+
+- url: /images
+  static_dir: public/images
+
+- url: /assets
+  static_dir: public/assets
+
+- url: /.*
+  script: _go_app
+  login: required
+
+env_variables:
+  APP_TOPIC: 'fs2-items'

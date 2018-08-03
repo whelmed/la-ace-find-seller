@@ -1,0 +1,17 @@
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "products-service-service"
+  namespace: "default"
+  labels:
+    app: "products-service"
+spec:
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 8001
+  selector:
+    app: "products-service"
+  type: "LoadBalancer"
+  loadBalancerIP: ""

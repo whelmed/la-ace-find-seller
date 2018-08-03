@@ -1,0 +1,64 @@
+resources:
+- name: {{ properties["prefix"] }}-instance-template
+  type: compute.v1.instanceTemplate
+  properties:
+    properties:
+      metadata:
+        items:
+        - key: startup-script
+          value: |
+            mkdir -p /app
+            gsutil cp gs://{{ properties["privateBucket"] }}/{{ properties["adBinName"] }} /app
+            chmod 755 /app/app
+            cat > /etc/systemd/system/ads.service << EOL
+            [Unit]
+            Description=Ads Service
+            
+            [Service]
+            # Start the js-file starting the express server
+            ExecStart=/app/{{ properties["adBinName"] }}
+            WorkingDirectory=/app
+            Restart=always
+            RestartSec=10
+            StandardOutput=syslog
+            StandardError=syslog
+            SyslogIdentifier=AdsService
+            Environment=AD_BUCKET={{ properties["publicBucket"] }} SPANNER_INSTANCE={{ properties["spannerInstance"] }} SPANNER_DATABASE={{ properties["spannerDatabase"] }} PROJECT_ID={{ properties["projectID"] }}
+            EOL
+            systemctl enable ads.service
+            systemctl start ads.service
+
+      machineType: f1-micro
+      scheduling: 
+        preemptible": true
+        onHostMaintenance": MIGRATE
+        automaticRestart": true
+      disks:
+      - deviceName: boot
+        boot: true
+        autoDelete: true
+        mode: READ_WRITE
+        type: PERSISTENT
+        initializeParams:
+          sourceImage: projects/ubuntu-os-cloud/global/images/ubuntu-minimal-1804-bionic-v20180705
+      networkInterfaces:
+        - accessConfigs:
+          - name: External NAT
+            type: ONE_TO_ONE_NAT
+            networkTier: PREMIUM
+          subnetwork: projects/{{ properties["projectID"] }}/regions/{{ properties["region"] }}/subnetworks/{{ properties["subnet"] }}
+          network: projects/{{ properties["projectID"] }}/global/networks/{{ properties["network"] }}
+      serviceAccounts:
+        - email: {{ properties["serviceAccount"] }}
+          scopes:
+            - https://www.googleapis.com/auth/devstorage.read_only
+            - https://www.googleapis.com/auth/logging.write
+            - https://www.googleapis.com/auth/monitoring.write
+            - https://www.googleapis.com/auth/servicecontrol
+            - https://www.googleapis.com/auth/service.management.readonly
+            - https://www.googleapis.com/auth/trace.append
+            - https://www.googleapis.com/auth/spanner.data
+
+outputs:
+- name: instanceTemplateSelfLink
+  value: $(ref.{{ properties["prefix"] }}-instance-template.selfLink)

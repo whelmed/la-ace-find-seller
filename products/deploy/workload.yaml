@@ -1,0 +1,76 @@
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "products-service-config"
+  namespace: "default"
+  labels:
+    app: "products-service"
+data:
+  # The path /sa comes from the volume mounted in the container.
+  # It mounts the secret to that path.
+  # The secret is created in the deploy.sh file for this service
+  SERVICE_ACCOUNT_FILE_NAME: "/sa/service_account.json" 
+  PROJECT_ID: "ace-demo-2"
+  PRODUCT_CACHE_BUCKET: "fs2-public-bucket"
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "products-service"
+  namespace: "default"
+  labels:
+    app: "products-service"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "products-service"
+  template:
+    metadata:
+      labels:
+        app: "products-service"
+    spec:
+      containers:
+      - name: "products"
+        image: "gcr.io/ace-demo-2/products:latest"
+        volumeMounts:
+        - name: service-account
+          mountPath: "/sa/"
+          readOnly: true
+        env:
+        - name: "SERVICE_ACCOUNT_FILE_NAME"
+          valueFrom:
+            configMapKeyRef:
+              key: "SERVICE_ACCOUNT_FILE_NAME"
+              name: "products-service-config"
+        - name: "PROJECT_ID"
+          valueFrom:
+            configMapKeyRef:
+              key: "PROJECT_ID"
+              name: "products-service-config"
+        - name: "PRODUCT_CACHE_BUCKET"
+          valueFrom:
+            configMapKeyRef:
+              key: "PRODUCT_CACHE_BUCKET"
+              name: "products-service-config"
+      volumes:
+      - name: service-account
+        secret: 
+            secretName: service-account-file
+---
+apiVersion: "autoscaling/v1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "products-service-hpa"
+  namespace: "default"
+  labels:
+    app: "products-service"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "products-service"
+    apiVersion: "apps/v1beta1"
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
