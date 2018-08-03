@@ -17,6 +17,8 @@ source ../../common/project_settings.sh
 # This section of code is modified from the code found here:
 # https://www.spinnaker.io/setup/install/providers/appengine/
 
+# Ensure the secrets dir exists
+mkdir -p ../app/secrets
 # Create a new role for the app. 
 SERVICE_ACCOUNT_NAME=product-service
 SERVICE_ACCOUNT_DEST=../app/secrets/service_account.json
