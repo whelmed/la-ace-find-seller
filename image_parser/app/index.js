@@ -82,8 +82,6 @@ exports.imageParser = (event, callback) => {
         return cb(err);
       });
 
-      print("Mayank")
-
   }
 
 
