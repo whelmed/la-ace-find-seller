@@ -1,6 +1,6 @@
 # This is a multi-stage build. The first stage builds the app.
 # The second stage copies the binary and adds it to a lightweight alpine container.
-FROM golang:1.9
+FROM golang:1.10
 
 WORKDIR /go/src/github.com/linuxacademy/products
 # Copy the application code to the working dir.
