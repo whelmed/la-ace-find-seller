@@ -5,4 +5,4 @@ docker run --rm -it \
     -v "$(dirname "$PWD")/build:/build" \
     -v "$(dirname "$PWD")/app:/code" \
     -v "$(dirname "$PWD")/vendor/src:/go/src/" \
-    golang:1.9 bash /build/go.sh
+    golang:1.11 bash /build/go.sh

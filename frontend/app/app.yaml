@@ -1,5 +1,4 @@
-runtime: go
-api_version: go1
+runtime: go111
 
 handlers:
 
@@ -14,7 +13,7 @@ handlers:
   static_dir: public/assets
 
 - url: /.*
-  script: _go_app
+  script: auto
   login: required
 
 env_variables:

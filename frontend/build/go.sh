@@ -2,7 +2,7 @@
 
 mkdir -p $GOPATH/src/github.com/linuxacademy/frontend
 
-cp -R /code/*.go $GOPATH/src/github.com/linuxacademy/frontend
+cp -R /code/* $GOPATH/src/github.com/linuxacademy/frontend
 
 cd $GOPATH/src/github.com/linuxacademy/frontend
 
